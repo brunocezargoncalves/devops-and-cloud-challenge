@@ -1,0 +1,144 @@
+https://imersao.devopspro.com.br/aulas/
+
+Aula 01 - https://www.youtube.com/watch?v=50VgSfrI_ts
+DevOps - Desafio Docker | Primeiros passos em DevOps e Docker
+
+O termo DevOps surge em 2009. 
+
+DevOps é conjunto de práticas e ferramentas para integrar equipes e otimizar processos com objetivo de melhorar a qualidade de software, acelerar o tempo de entrega, e garantir a confiabilidade das aplicações em produção.
+
+Baseado em ciclos contínuos e curtos de entrega com feeddback e melhorias. 
+
+Alguns benefícios comprovados: https://scoop.market.us/devops-market-news
+
+Sobre a utilização do framework DevOps: https://www.devopsinstitute.com/upslilling-it/
+
+Pilares DevOps:
+C - Cultura (Culture)
+A - Automação (Automation)
+L - Enxuto (Lean)
+M - Medição (Measurement)
+S - Compartilhamento (Sharing)
+
+Etapas do ciclo infinito de DevOps - cada etapa por ser apoiada por diferentes ferramentas:
+1. Plan (Planejamento)
+2. Code (Codificação)
+3. Build (Execução)
+4. Test (Testes)
+5. Release (Versão)
+6. Deploy (Publicação)
+7. Operate (Produção)
+8. Monitor (Observabilidade)
+
+
+Docker
+
+Plataforma para criar, gerenciar e distribuir aplicações de forma rápida através de containeres.
+
+Através do Docker podemos executar processos de forma isolada e padronizada que permite portabilidade (deplay em qualquer cloud). 
+Os containers são utilizadas para isolar aplicações, garantindo o funcionamento em qualquer ambiente.
+
+No Windows recomendá-se executar o Docker via WSL, neste caso, a versão Docker Engine.
+
+Comandos básicos Docker
+
+Container:
+- Criar e executar um container "docker container run". Uma aplicação teste para verificar a instalação do Docker "docker container run hello-world".
+- Listar containers "docker container ls". Ou para listar todos os containers, mesmo não estando em execução "docker container ls -a".
+- Remover containeres "docker container rm [NAME OR ID]".
+- Remover todos os containeres mesmo em execução "docker container rm -f [NAME, ID OR ALL ($(docker container ls -qa))]".
+- Criar container, manter em execução em background e expor uma porta para acesso local "docker container run -d -p 8080:80 nginx".
+- Limpar configurações do Docker "docker system prune".
+
+Imagem (oficiais ou não):
+Obs.: em uma aplicação propria é necessário criar uma imagem contendo a referência base e todas suas dependências para que ela possa ser executada. Toda essa configuração estará contida no docker file (um espécie de arquivo de receita, um template).
+- Limpar imagens sem contexto/lixos residuais de construção de imagens "docker image prune".
+- Excluir imagens "docker image rm [NAME OR ID]".
+- Excluir todas imagens "docker image rm -f $(docker image ls -q)".
+
+Imagem e container de aplicação própria:
+- Criar uma imagem "docker build -t devops-and-cloud-challenge-distance-conversation -f Dockerfile .".
+- Criar um container a partir da imagem criada "docker container run -d -p 8181:5000 devops-and-cloud-challenge-distance-conversation".
+
+".d" deploy 
+".p" tornar acessível
+
+Imagem no Docker Hub
+- Criar conta
+- Renomer a imagem para o padrão Docker Hub, utilizando o namespace "docker build -t brunocezargoncalves/devops-and-cloud-challenge-distance-conversation:v1 -f Dockerfile .".
+- Autenticar no Docker Hub "docker login".
+- Enviar imagem para o Docker Hub "docker push brunocezargoncalves/devops-and-cloud-challenge-distance-conversation:v1".
+
+Tagear imagem
+- Adicionar uma tag a imagem: "docker tag brunocezargoncalves/devops-and-cloud-challenge-distance-conversation:v1 brunocezargoncalves/devops-and-cloud-challenge-distance-conversation:latest"
+- Atualizar no Docker Hub: "docker push brunocezargoncalves/devops-and-cloud-challenge-distance-conversation:latest"
+
+Container da imagem de aplicação própria do Docker Hub:
+Para criar um container a partir da sua imagem Docker Hub: docker container run -d -p 8181:5000 brunocezargoncalves/devops-and-cloud-challenge-distance-conversation:v1
+
+---
+
+Aula 02 - https://www.youtube.com/watch?v=Dte8fLrh16k
+Kubernetes - Desafio Kubernetes |  Do zero ao deploy
+
+Criado pelo Google em 2014 e doado a Linux Foundation 2015. Hoje mantido pela Cloud Native Computer Foundation.
+
+O Kubernetes realiza a orquestração de containers para garantir a estabilidade/disponibilidade, a resiliencia, a escalabilidade 
+em aplicações críticas, de grande porte e de alto desempenho através de um ambiente gerenciado único.
+
+O Docker (suportado pelo Kubernetes por convensão) auxilia na execução de aplicações de forma isolada e funciona bem sozinho em cenários de pouca complexidade.  
+Mas, em ambiente com diversos micro serviços  onde é necessário criar replicas de containers para garantir disponibilidade o Docker sozinho não resolve.
+
+O Kubernetes também é capaz de realizar a atualização de aplicações, gerenciando configurações, garantindo down-time zero a disponibilidade dessas aplicações.
+
+Kubernetes é a principal ferramenta para ambientes escaláveis e resilientes. 
+
+Ele funciona com uma arquitetura de clusters: control plane e worker nodes. 
+
+E é disponibilizado/distribuído on-premisse, via IAAS (gerenciado pelo provedor cloud) ou localmente (Minikube, Kind ou K3d). 
+
+
+Distribuição local via K3d, utilizando containers Docker. 
+
+Pré-requisitos:
+- Docker
+- "kubectl" (https://kubernetes.io/docs/tasks/tools/). Onde, em ambientes Windows, apesar do suporte, recomenda-se instalar via WSL. 
+- "k3d" (https://k3d.io/). 
+
+Usar o VS Code para editar os arquivos de configuração (.yml). Ainda no VS Code instalar a extensão "Kubernetes".
+
+
+Para o deploy de aplicações com Kubernetes é necessário criar o cluster
+
+Criar o cluster Kubernetes "k3d cluster create". Será criado um cluster simples, com apenas um nó (ele ficará com todas as responsabilidades).
+Criar o cluster Kubernetes "k3d cluster create meucluster --servers 3 --agents 3. Será criado um cluster de alta disponibilidade.
+"--servers": representa a quantidade de control-planes
+"--agents": representa a quantidade de worknodes
+
+- Listar os clusters Kubernetes "k3d cluster list"
+- Listar os nós do cluster "kubectl get nodes".
+- Listar os containeres criados a partir da criação do cluster "docker container ls". 
+    1. Container do nó do cluster
+    2. Container do proxy (que é o loadbalance)
+    3. Contaiiner de ferramentas para o K3d
+- Deleter o cluster "k3d cluster delete" (e todas as dependências criadas)
+
+---
+
+Aula 03
+AWS - Desafio AWS | Deploy ágil e seguro na cloud
+
+---
+
+Aula 04
+GitHub Actions - Desafio GitHub Actions | Deploy automatizado e sem medo
+
+---
+
+Aula 05
+Prometheus - Desafio Prometheus | Visão 360 da sua aplicação com Prometheus e Grafana
+
+---
+
+Aula 06
+Como montar o seu portifólio de projetos + Abertura de Matríclas
